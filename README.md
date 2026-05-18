@@ -35,7 +35,6 @@
     <div id="resultat">0 kg</div>
   </div>
 </div>
-      <h3>Fruits Entamés</h3>
       <input type="number" class="valeur" placeholder="Poids en kg" oninput="calculerTotal()">
     </div>
   </div>
