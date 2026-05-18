@@ -28,3 +28,10 @@
       <h3>Fruits Entamés</h3>
       <input type="number" class="valeur" placeholder="Poids en kg" oninput="calculerTotal()">
     </div>
+  </div>
+
+  <div class="total-section">
+    <h2>Total des déchets aujourd'hui :</h2>
+    <div id="resultat">0 kg</div>
+  </div>
+</div>
