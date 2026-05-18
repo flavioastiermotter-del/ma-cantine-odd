@@ -30,3 +30,8 @@
     </div>
   </div>
 
+  <div class="total-section">
+    <h2>Total des déchets aujourd'hui :</h2>
+    <div id="resultat">0 kg</div>
+  </div>
+</div>
