@@ -28,38 +28,3 @@
       <h3>Fruits Entamés</h3>
       <input type="number" class="valeur" placeholder="Poids en kg" oninput="calculerTotal()">
     </div>
-  </div>
-
-  <div class="total-section">
-    <h2>Total des déchets aujourd'hui :</h2>
-    <div id="resultat">0 kg</div>
-  </div>
-</div>
-function calculerTotal() {
-  let cases = document.querySelectorAll('.valeur');
-  let somme = 0;
-
-  cases.forEach(function(caseIndividuelle) {
-    let chiffre = parseFloat(caseIndividuelle.value);
-    if (!isNaN(chiffre)) {
-      somme = somme + chiffre;
-    }
-  });
-
-  // Affichage du total
-  document.getElementById('resultat').innerText = somme.toFixed(1) + " kg";
-
-  // --- NOUVEAUTÉ : Le système d'alerte ---
-  let zoneMessage = document.getElementById('message-odd');
-  
-  if (somme === 0) {
-    zoneMessage.innerText = "En attente des pesées de la cantine...";
-    zoneMessage.style.color = "#7f8c8d";
-  } else if (somme <= 35) {
-    zoneMessage.innerText = "🌱 Bravo ! Objectif ODD atteint. Faible impact sur la planète.";
-    zoneMessage.style.color = "#27ae60";
-  } else {
-    zoneMessage.innerText = "⚠️ Alerte Gaspillage ! Attention, nous dépassons l'objectif fixé pour 700 élèves.";
-    zoneMessage.style.color = "#c0392b";
-  }
-}
