@@ -546,3 +546,177 @@ function reinitialiserSemaine() {
 
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Eco-Cantine Vaucluse | ODD</title>
+    <!-- Graphiques express -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body { font-family: sans-serif; background-color: #f4f7f5; margin: 0; padding: 20px; color: #333; }
+        
+        /* UNE SEULE PAGE : Tout est regroupé dans cette unique boîte blanche */
+        .dashboard { max-width: 850px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        
+        h1 { color: #2e7d32; margin: 0 0 5px 0; font-size: 1.7em; text-align: center; }
+        .intro { color: #666; margin-bottom: 20px; font-size: 0.9em; text-align: center; }
+        
+        /* Le bandeau récapitulatif de la semaine tout en haut */
+        .recap-semaine { display: flex; justify-content: space-between; align-items: center; background: #e8f5e9; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; }
+        #total-semaine { color: #1b5e20; font-size: 1.3em; }
+
+        /* Les 5 boutons des jours alignés */
+        .buttons-row { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 25px; }
+        .btn-jour { flex: 1; padding: 10px 2px; font-size: 0.95em; font-weight: bold; border: 2px solid #2e7d32; border-radius: 6px; background: white; color: #2e7d32; cursor: pointer; }
+        .btn-jour.active { background: #2e7d32; color: white; }
+
+        /* Organisation côte à côte pour ne faire qu'une seule page */
+        .main-content { display: flex; gap: 30px; flex-wrap: wrap; text-align: left; }
+        .inputs-side { flex: 1.2; min-width: 300px; }
+        .chart-side { flex: 1; min-width: 280px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+        /* Les lignes de poubelles */
+        .poubelle { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 12px; border-radius: 6px; color: white; font-weight: bold; font-size: 0.95em; }
+        .p1 { background-color: #d35400; } 
+        .p2 { background-color: #7f8c8d; } 
+        .p3 { background-color: #f1c40f; color: black; } 
+        .p4 { background-color: #2980b9; } 
+        .p5 { background-color: #27ae60; } 
+        input { width: 85px; padding: 6px; border-radius: 4px; border: none; text-align: center; font-weight: bold; font-size: 1em; }
+
+        #total-jour { font-size: 1.4em; font-weight: bold; margin-top: 15px; text-align: center; color: #2e7d32; }
+        #msg { text-align: center; font-weight: bold; margin-top: 5px; min-height: 22px; }
+        
+        .btn-clear { background: #c0392b; color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-size: 0.85em; margin-top: 15px; width: 100%; }
+    </style>
+</head>
+<body>
+
+<div class="dashboard">
+    <h1>📊 Anti-Gaspi Collège Vaucluse</h1>
+    <p class="intro">Bilan ODD pour nos 700 demi-pensionnaires</p>
+    
+    <!-- Récapitulatif Hebdo en haut -->
+    <div class="recap-semaine">
+        <span>📈 BILAN HEBDOMADAIRE :</span>
+        <span id="total-semaine">Total Semaine : 0 g</span>
+    </div>
+
+    <!-- Les 5 boutons sur une seule ligne -->
+    <div class="buttons-row">
+        <button type="button" class="btn-jour active" id="btn-Lundi" onclick="changerJour('Lundi')">Lundi</button>
+        <button type="button" class="btn-jour" id="btn-Mardi" onclick="changerJour('Mardi')">Mardi</button>
+        <button type="button" class="btn-jour" id="btn-Mercredi" onclick="changerJour('Mercredi')">Mercredi</button>
+        <button type="button" class="btn-jour" id="btn-Jeudi" onclick="changerJour('Jeudi')">Jeudi</button>
+        <button type="button" class="btn-jour" id="btn-Vendredi" onclick="changerJour('Vendredi')">Vendredi</button>
+    </div>
+
+    <!-- Le contenu principal unifié -->
+    <div class="main-content">
+        
+        <!-- À gauche : La saisie des données -->
+        <div class="inputs-side">
+            <h3 id="titre-saisie" style="margin-top:0; color:#2e7d32;">Saisie du Lundi</h3>
+            <div class="poubelle p1"><span>🗑️ Déchets Alimentaires</span> <input type="number" id="input-p1" class="poids" value="0" min="0" oninput="sauvegarderEtCalculer()"></div>
+            <div class="poubelle p2"><span>🧻 Serviettes Papiers</span> <input type="number" id="input-p2" class="poids" value="0" min="0" oninput="sauvegarderEtCalculer()"></div>
+            <div class="poubelle p3"><span>🥖 Pain (Gaspillage)</span> <input type="number" id="input-p3" class="poids" value="0" min="0" oninput="sauvegarderEtCalculer()"></div>
+            <div class="poubelle p4"><span>📦 Emballages</span> <input type="number" id="input-p4" class="poids" value="0" min="0" oninput="sauvegarderEtCalculer()"></div>
+            <div class="poubelle p5"><span>🍎 Fruits Entamés</span> <input type="number" id="input-p5" class="poids" value="0" min="0" oninput="sauvegarderEtCalculer()"></div>
+            
+            <div id="total-jour">Total du jour : 0 g</div>
+            <div id="msg"></div>
+            <button class="btn-clear" onclick="reinitialiserSemaine()">🔄 Réinitialiser toute la semaine</button>
+        </div>
+        
+        <!-- À droite : Le graphique d'analyse -->
+        <div class="chart-side">
+            <h4 style="margin: 0 0 10px 0;">🍰 Répartition des déchets</h4>
+            <canvas id="graphCamembert" style="max-height: 240px; max-width: 240px;"></canvas>
+        </div>
+
+    </div>
+</div>
+
+<script>
+let jourSelectionne = "Lundi";
+let donneesSemaine = JSON.parse(localStorage.getItem('donneesCantineV3')) || {
+    Lundi: [0,0,0,0,0], Mardi: [0,0,0,0,0], Mercredi: [0,0,0,0,0], Jeudi: [0,0,0,0,0], Vendredi: [0,0,0,0,0]
+};
+
+// Un seul graphique en camembert compact sur la droite
+const ctxPie = document.getElementById('graphCamembert').getContext('2d');
+let graphCamembert = new Chart(ctxPie, {
+    type: 'pie',
+    data: {
+        labels: ['Alim.', 'Serviettes', 'Pain', 'Embal.', 'Fruits'],
+        datasets: [{ data: [0, 0, 0, 0, 0], backgroundColor: ['#d35400', '#7f8c8d', '#f1c40f', '#2980b9', '#27ae60'] }]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+});
+
+changerJour('Lundi');
+
+function changerJour(jour) {
+    jourSelectionne = jour;
+    document.querySelectorAll('.btn-jour').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('btn-' + jour).classList.add('active');
+    document.getElementById('titre-saisie').innerText = "Saisie du " + jour;
+    
+    let valeursJour = donneesSemaine[jour];
+    document.getElementById('input-p1').value = valeursJour[0];
+    document.getElementById('input-p2').value = valeursJour[1];
+    document.getElementById('input-p3').value = valeursJour[2];
+    document.getElementById('input-p4').value = valeursJour[3];
+    document.getElementById('input-p5').value = valeursJour[4];
+    
+    calculerTout();
+}
+
+function sauvegarderEtCalculer() {
+    donneesSemaine[jourSelectionne] = [
+        parseFloat(document.getElementById('input-p1').value) || 0,
+        parseFloat(document.getElementById('input-p2').value) || 0,
+        parseFloat(document.getElementById('input-p3').value) || 0,
+        parseFloat(document.getElementById('input-p4').value) || 0,
+        parseFloat(document.getElementById('input-p5').value) || 0
+    ];
+    localStorage.setItem('donneesCantineV3', JSON.stringify(donneesSemaine));
+    calculerTout();
+}
+
+function calculerTout() {
+    // Calcul du jour sélectionné
+    let valeursJour = donneesSemaine[jourSelectionne];
+    let totalJour = valeursJour.reduce((a, b) => a + b, 0);
+    document.getElementById('total-jour').innerText = "Total du jour : " + totalJour.toFixed(0) + " g";
+    
+    graphCamembert.data.datasets[0].data = valeursJour;
+    graphCamembert.update();
+    
+    // Alerte ODD journalière (Seuil 35kg)
+    let msg = document.getElementById('msg');
+    if (totalJour === 0) { msg.innerText = ""; }
+    else if (totalJour <= 35000) { msg.innerText = "🌱 Objectif ODD atteint !"; msg.style.color = "green"; }
+    else { msg.innerText = "⚠️ Alerte Gaspillage !"; msg.style.color = "red"; }
+
+    // Calcul de la semaine globale
+    let totalSemaine = 0;
+    for (let j in donneesSemaine) {
+        totalSemaine += donneesSemaine[j].reduce((a, b) => a + b, 0);
+    }
+    document.getElementById('total-semaine').innerText = "Total Semaine : " + totalSemaine.toFixed(0) + " g";
+}
+
+function reinitialiserSemaine() {
+    if (confirm("Effacer les données de la semaine ?")) {
+        localStorage.removeItem('donneesCantineV3');
+        donneesSemaine = { Lundi:[0,0,0,0,0], Mardi:[0,0,0,0,0], Mercredi:[0,0,0,0,0], Jeudi:[0,0,0,0,0], Vendredi:[0,0,0,0,0] };
+        changerJour(jourSelectionne);
+    }
+}
+</script>
+
+</body>
+</html>
