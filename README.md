@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Eco-Cantine Vaucluse | ODD</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
     
     <style>
         body { font-family: sans-serif; background-color: #f4f7f5; text-align: center; padding: 20px; }
